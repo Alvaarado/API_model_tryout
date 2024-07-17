@@ -63,7 +63,7 @@ async def retrain():
         model.fit(X, y)
         with open(model_path, 'wb') as model_file:
             pickle.dump(model, model_file)
-        return "¡Modelo reentrenado!"
+        return "Modelo reentrenado correctamente."
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
