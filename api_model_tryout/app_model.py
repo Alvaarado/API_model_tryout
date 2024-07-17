@@ -29,9 +29,9 @@ async def saludo():
 # Endpoint de predicción
 
 @app.get("/predict")
-async def prediccion(TV: float, radio: float, newspaper: float):
+async def prediccion(TV: float, radio: float, newpaper: float):
    try:
-        data_inversion = {'TV': TV, 'radio': radio, 'newspaper': newspaper}
+        data_inversion = {'TV': TV, 'radio': radio, 'newpaper': newpaper}
 
         input = pd.DataFrame([data_inversion])
         prediction = model.predict(input)
@@ -42,13 +42,13 @@ async def prediccion(TV: float, radio: float, newspaper: float):
 
 # Endpoint de ingesta de datos
 
-@app.post("/add_data")
-async def add_data(TV,radio, newspaper, sales):
+@app.post("/ingest")
+async def ingest(TV,radio, newpaper, sales):
     try:
-        cursor.execute('''INSERT INTO advertising_clean (TV, radio, newspaper, sales) 
-                        VALUES (?,?,?,?)''', (TV,radio,newspaper,sales))
+        cursor.execute('''INSERT INTO advertising_clean (TV, radio, newpaper, sales) 
+                        VALUES (?,?,?,?)''', (TV,radio,newpaper,sales))
         conn.commit()
-        return "Datos ingresados"
+        return "Datos ingresados correctamente"
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -58,14 +58,12 @@ async def add_data(TV,radio, newspaper, sales):
 async def retrain():
     try:
         df = pd.read_sql_query("SELECT * FROM advertising_clean", conn)
-
-    
-        X = df[['TV', 'radio', 'newspaper']]  
+        X = df[['TV', 'radio', 'newpaper']]  
         y = df['sales']  
         model.fit(X, y)
         with open(model_path, 'wb') as model_file:
             pickle.dump(model, model_file)
-        return "Modelo reentrenado!"
+        return "¡Modelo reentrenado!"
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
