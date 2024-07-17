@@ -11,13 +11,13 @@ model_path = './data/advertising_model.pkl'
 with open(model_path, 'rb') as model_file:
     model = pickle.load(model_file)
 
-advertising_df = pd.read_csv('./data/Advertising.csv')
-conn = sqlite3.connect('Adv_data.db')
-advertising_df.to_sql('Advertising', conn, if_exists='replace', index=False)
+advertising_df = pd.read_csv('./data/advertising_clean.csv')
+conn = sqlite3.connect('adv_data_clean.db')
+advertising_df.to_sql('advertising_clean', conn, if_exists='replace', index=False)
 
 app = FastAPI()
 
-conec = sqlite3.connect('Adv_data.db')
+conec = sqlite3.connect('adv_data_clean.db')
 cursor = conec.cursor()
 
 # Saludo de entrada
@@ -45,7 +45,7 @@ async def prediccion(TV: float, radio: float, newspaper: float):
 @app.post("/add_data")
 async def add_data(TV,radio, newspaper, sales):
     try:
-        cursor.execute('''INSERT INTO Advertising (TV, radio, newspaper, sales) 
+        cursor.execute('''INSERT INTO advertising_clean (TV, radio, newspaper, sales) 
                         VALUES (?,?,?,?)''', (TV,radio,newspaper,sales))
         conn.commit()
         return "Datos ingresados"
@@ -57,7 +57,7 @@ async def add_data(TV,radio, newspaper, sales):
 @app.post("/retrain")
 async def retrain():
     try:
-        df = pd.read_sql_query("SELECT * FROM Advertising", conn)
+        df = pd.read_sql_query("SELECT * FROM advertising_clean", conn)
 
     
         X = df[['TV', 'radio', 'newspaper']]  
