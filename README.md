@@ -40,7 +40,7 @@ Esta API proporciona una predicción de ventas basada en los gastos de marketing
 
 - Descripción: realiza el reentrenamiento del modelo utilizando todos los datos almacenados en la base de datos. Después del reentrenamiento, el modelo actualizado se guarda en el sistema de archivos para su uso futuro en predicciones.
 
-4. Herramientas
+## Herramientas
 
 * FastAPI: construir la API.
 
